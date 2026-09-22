@@ -6,4 +6,5 @@ trustPolicy: no-downgrade
 trustPolicyIgnoreAfter: 525600
 trustLockfile: false
 allowBuilds:
+  esbuild: true
   unrs-resolver: true
