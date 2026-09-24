@@ -6,6 +6,7 @@ import { useUser } from "@clerk/nextjs";
 import { v4 as uuidv4 } from "uuid";
 import toast from "react-hot-toast";
 import moment from "moment";
+import { useRouter } from "next/navigation";
 
 import {
   AlertDialog,
@@ -35,6 +36,8 @@ const CreateNewInterview = () => {
   const [loadingAIResponse, setLoadingAIResponse] = useState(false);
 
   const [ generatedQuestionsAndAnswersByAI, setGeneratedQuestionsAndAnswersByAI ] = useState();
+
+  const router = useRouter();
 
 
   const handleSubmitForm = async (e) => {
@@ -70,6 +73,8 @@ const CreateNewInterview = () => {
           toast.success("Mock interview created successfully!");
 
           setShowCreateInterviewDialogBox(false);
+
+          router.push(`/dashboard/interview/${storeAllDataInDB?.dataStoredInDB?.uniqueMockInterviewId}`);
 
         }
 
