@@ -6,5 +6,7 @@ trustPolicy: no-downgrade
 trustPolicyIgnoreAfter: 525600
 trustLockfile: false
 allowBuilds:
+  '@google/genai': true
   esbuild: true
+  protobufjs: true
   unrs-resolver: true

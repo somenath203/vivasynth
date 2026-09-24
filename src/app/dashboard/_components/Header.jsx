@@ -13,7 +13,7 @@ const Header = () => {
       
       {/* logo */}
       <Link href="/dashboard">
-        <h1 className="font-semibold">Viva<span className="text-primary">Synth</span></h1>
+        <h1 className="font-semibold text-xl">Viva<span className="text-primary">Synth</span></h1>
       </Link>
 
       {/* menu */}
