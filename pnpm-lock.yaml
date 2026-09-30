@@ -205,6 +205,9 @@ importers:
       react-dom:
         specifier: 19.2.8
         version: 19.2.8(react@19.2.8)
+      react-hook-speech-to-text:
+        specifier: ^0.8.0
+        version: 0.8.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react-hot-toast:
         specifier: ^2.6.1
         version: 2.6.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -3838,6 +3841,12 @@ packages:
     resolution: {integrity: sha512-rVprimfGBG3DR+Tq0IQG2DT5PxKth1WIGDmj5yPmlzr4YBe7uyE+Du4oVqTDXZSHGGGXRtTJEGSSePyQCMBglQ==}
     peerDependencies:
       react: ^19.2.8
+
+  react-hook-speech-to-text@0.8.0:
+    resolution: {integrity: sha512-hct4gF0Wesn79Pfg+t2PDCa7n0rfSKdzXI4uxq6A5awwUZZG58T67mJNjZDD9Hu9O+6E1Nk5ZpuIPdDLk1fqmw==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
 
   react-hot-toast@2.6.1:
     resolution: {integrity: sha512-gjFsf05dxcku0FkyMtFH+XmYFdA2odXfBVknEr/IZ+XpUjwsgvtY2616sOpUynK+l9ykQDRNpaJ1hYfuximUiA==}
@@ -7849,6 +7858,11 @@ snapshots:
     dependencies:
       react: 19.2.8
       scheduler: 0.27.0
+
+  react-hook-speech-to-text@0.8.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+    dependencies:
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
 
   react-hot-toast@2.6.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:

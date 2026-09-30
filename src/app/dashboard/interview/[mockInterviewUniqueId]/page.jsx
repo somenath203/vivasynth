@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import Webcam from "react-webcam";
 import { WebcamIcon, Lightbulb } from "lucide-react";
+import toast from "react-hot-toast";
+import Link from "next/link";
 
 import { getParticularMockInterviewBasedOnUniqueMockInterviewId } from "@/server-actions/mock-interview-server-actions";
 import { Button } from "@/components/ui/button";
@@ -11,9 +13,11 @@ import { Button } from "@/components/ui/button";
 const Page = ({ params }) => {
 
 
-  const [wholeInterviewData, setWholeInterviewData] = useState();
+  const [ mockInterViewUniqueIdFromParams, setMockInterViewUniqueIdFromParams ] = useState();
 
-  const [isWebCamEnabled, setIsWebCamEnabled] = useState(false);
+  const [ wholeInterviewData, setWholeInterviewData ] = useState();
+
+  const [ isWebCamEnabled, setIsWebCamEnabled ] = useState(false);
 
 
   useEffect(() => {
@@ -23,6 +27,8 @@ const Page = ({ params }) => {
       try {
 
         const { mockInterviewUniqueId } = await params;
+
+        setMockInterViewUniqueIdFromParams(mockInterviewUniqueId);
 
         const getWholeMockInterviewBasedOnMockInterviewUniqueId = await getParticularMockInterviewBasedOnUniqueMockInterviewId(mockInterviewUniqueId);
 
@@ -93,28 +99,52 @@ const Page = ({ params }) => {
 
           {isWebCamEnabled ? (
 
-            <Webcam
-              style={{ height: 300, width: 300 }}
-              mirrored={true} // Mirrors the webcam preview so left-hand movements appear on the left and right-hand movements on the right.
-              onUserMedia={() => {
-                /*
-                * This callback runs when React-Webcam successfully receives
-                * the user's camera media stream.
-                *
-                * At this point, the browser has granted camera access and
-                * the webcam stream is available to the component.
-                */
-                setIsWebCamEnabled(true);
-              }}
-              onUserMediaError={() => {
-                /*
-                * This callback runs when React-Webcam cannot access the
-                * user's camera, for example when camera permission is denied
-                * or the camera stream cannot be obtained.
-                */
-                setIsWebCamEnabled(false);
-              }}
-            />
+            <>
+
+              <Webcam
+                className="w-full h-72 my-7 rounded-lg border object-cover"
+                mirrored={true} // Mirrors the webcam preview so left-hand movements appear on the left and right-hand movements on the right.
+                onUserMedia={() => {
+                  /*
+                  * This callback runs when React-Webcam successfully receives
+                  * the user's camera media stream.
+                  *
+                  * At this point, the browser has granted camera access and
+                  * the webcam stream is available to the component.
+                  */
+                  setIsWebCamEnabled(true);
+
+                  toast.success('Camera working successfully');
+
+                }}
+                onUserMediaError={(error) => {
+                  /*
+                  * This callback runs when React-Webcam cannot access the
+                  * user's camera, for example when camera permission is denied
+                  * or the camera stream cannot be obtained.
+                  */
+
+                  console.log(error);
+                  
+                  setIsWebCamEnabled(false);
+
+                  toast.error('Something went wrong while enabling camera');
+
+                }}
+              />
+
+              <Link href={`/dashboard/interview/${mockInterViewUniqueIdFromParams}/start-interview`}>
+
+                <Button
+                  type="button"
+                  className="w-full py-5 hover:cursor-pointer"
+                >
+                  Start Interview
+                </Button>
+
+              </Link>
+
+            </>
 
           ) : (
 
@@ -124,11 +154,10 @@ const Page = ({ params }) => {
 
               <Button
                 type="button"
-                variant="ghost"
                 onClick={() => setIsWebCamEnabled(true)}
                 className="w-full py-5 hover:cursor-pointer"
               >
-                Enable Webcam & Microphone
+                Check Webcam
               </Button>
 
             </>
@@ -136,12 +165,6 @@ const Page = ({ params }) => {
           )}
 
         </div>
-
-      </div>
-
-      <div className="mt-10 flex justify-end items-end">
-
-        <Button>Start Interview</Button>
 
       </div>
 
