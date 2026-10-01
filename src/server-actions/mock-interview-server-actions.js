@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 
 import { db } from "..";
 import { mockInterviewDataTable, userAnswerDataTable } from "@/db/schema";
@@ -179,4 +179,41 @@ export const getAllMockInterviewAnswerDataForParticularInterview = async (mockIn
 
   }
   
+};
+
+
+export const getAllMockInterviewDataForParticularUser = async (emailAddressOfTheUser) => {
+
+  try {
+
+    const { isAuthenticated } = await auth();
+
+    if (!isAuthenticated) {
+
+      throw new Error("You must be signed in to access this server.");
+
+    }
+
+    const mockInterviewData = await db
+      .select()
+      .from(mockInterviewDataTable)
+      .where(eq(mockInterviewDataTable.emailIdOfTheUserWhoCreatedTheMockInterview, emailAddressOfTheUser))
+      .orderBy(desc(mockInterviewDataTable.id));
+
+    return {
+      success: true,
+      data: mockInterviewData,
+    };
+
+  } catch (error) {
+
+    console.error("Error fetching user's mock interview data:", error);
+
+    return {
+      success: false,
+      message: error?.message || "Failed to fetch mock interview data. Please try again.",
+    };
+
+  }
+
 };

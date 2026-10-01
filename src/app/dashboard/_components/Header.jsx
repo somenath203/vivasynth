@@ -21,12 +21,6 @@ const Header = () => {
 
         <li className={`hover:text-primary hover:font-bold transition-all ${path === '/dashboard' && 'text-primary font-bold'}`}>Dashboard</li>
 
-        <li className={`hover:text-primary hover:font-bold transition-all ${path === '/dashboard/questions' && 'text-primary font-bold'}`}>Questions</li>
-
-        <li className={`hover:text-primary hover:font-bold transition-all ${path === '/dashboard/upgrade' && 'text-primary font-bold'}`}>Upgrade</li>
-
-        <li className={`hover:text-primary hover:font-bold transition-all ${path === '/dashboard/howitworks' && 'text-primary font-bold'}`}>How it Works</li>
-
         <UserButton />
 
       </ul>

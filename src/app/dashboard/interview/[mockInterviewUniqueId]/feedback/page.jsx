@@ -2,7 +2,7 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import { ChevronDown, CheckCircle2 } from "lucide-react";
+import { ChevronDown, CheckCircle2, CircleAlert } from "lucide-react";
 import Link from "next/link";
 
 import {
@@ -12,11 +12,16 @@ import {
 } from "@/components/ui/collapsible";
 import { getAllMockInterviewAnswerDataForParticularInterview } from "@/server-actions/mock-interview-server-actions";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 
 const Page = ({ params }) => {
 
-  const [ mockInterviewQnaDataAlongWithRatingAndFeedback, setMockInterviewQnaDataAlongWithRatingAndFeedback ] = useState();
+  const [ uniqueMockInterviewId, setUniqueMockInterviewId ] = useState();
+
+  const [ mockInterviewQnaDataAlongWithRatingAndFeedback, setMockInterviewQnaDataAlongWithRatingAndFeedback ] = useState([]);
+
+  const [ loadingMockInterviewQnaData, setLoadingMockInterviewQnaData ] = useState();
 
   const { user } = useUser();
 
@@ -25,6 +30,8 @@ const Page = ({ params }) => {
     const getInterviewFeedback = async () => {
 
       try {
+
+        setLoadingMockInterviewQnaData(true);
 
         const { mockInterviewUniqueId } = await params;
 
@@ -36,12 +43,18 @@ const Page = ({ params }) => {
           
           setMockInterviewQnaDataAlongWithRatingAndFeedback(res?.data);
 
+          setUniqueMockInterviewId(mockInterviewUniqueId);
+
         }
         
       } catch (error) {
 
         console.log(error);
         
+      } finally {
+
+        setLoadingMockInterviewQnaData(false);
+
       }
 
   }
@@ -56,10 +69,10 @@ const Page = ({ params }) => {
       {/* Header */}
       <div className="mb-8">
 
-        <div className="mb-3 flex items-center gap-2 text-green-600">
+        {mockInterviewQnaDataAlongWithRatingAndFeedback?.length > 0 && <div className="mb-3 flex items-center gap-2 text-green-600">
           <CheckCircle2 size={20} />
           <h2 className="text-sm font-medium">Interview Completed Successfully</h2>
-        </div>
+        </div>}
 
         <h2 className="text-3xl font-bold tracking-tight">Here is your interview feedback</h2>
 
@@ -67,17 +80,41 @@ const Page = ({ params }) => {
 
       </div>
 
-      {/* Overall rating */}
-      <div className="mb-8 flex items-center justify-between rounded-xl border bg-secondary/50 px-5 py-4">
+      {mockInterviewQnaDataAlongWithRatingAndFeedback?.length === 0 && (
 
-        <h2 className="text-sm text-gray-600">Your overall interview rating</h2>
+        <div className="flex min-h-100 items-center justify-center">
 
-        <strong className="text-lg font-bold text-primary">7/10</strong>
+          <div className="w-full max-w-md rounded-2xl border bg-background p-8 text-center shadow-sm">
 
-      </div>
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-secondary">
+              <CircleAlert className="h-7 w-7 text-muted-foreground" />
+            </div>
 
-      {/* Questions */}
-      <div className="space-y-3">
+            <h2 className="text-2xl font-bold tracking-tight">
+              No Interview Record Found
+            </h2>
+
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              You haven&apos;t completed this interview yet. Start the interview to
+              receive your personalized feedback and performance analysis.
+            </p>
+
+            <Link href={`/dashboard/interview/${uniqueMockInterviewId}/start-interview`} className="mt-6 inline-flex">
+
+              <Button className="px-6 hover:cursor-pointer">
+                Start Interview
+              </Button>
+
+            </Link>
+
+          </div>
+          
+        </div>
+
+      )}
+
+      {/* Interview data */}
+      {loadingMockInterviewQnaData ? <Loader2 size={30} className="text-primary transition-all animate-spin duration-150" /> : <div className="space-y-3">
 
         {mockInterviewQnaDataAlongWithRatingAndFeedback?.map((data, index) => (
 
@@ -123,15 +160,15 @@ const Page = ({ params }) => {
 
         ))}
 
-      </div>
+      </div>}
 
-      <div className="mt-8">
+      {!loadingMockInterviewQnaData && <div className="mt-8">
 
         <Link href='/dashboard'>
           <Button className="p-4 hover:cursor-pointer">Go to Dashboard</Button>
         </Link>
 
-      </div>
+      </div>}
 
     </div>
   )

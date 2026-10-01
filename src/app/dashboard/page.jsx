@@ -1,4 +1,5 @@
 import CreateNewInterview from "./_components/CreateNewInterview";
+import InterviewHistoryList from "./_components/InterviewHistoryList";
 
 const Page = () => {
   return (
@@ -13,6 +14,13 @@ const Page = () => {
         <CreateNewInterview />
 
       </div>
+
+      <div>
+
+        <InterviewHistoryList />
+
+      </div>
+
 
     </div>
   )
