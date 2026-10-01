@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from "@clerk/nextjs";
+import { useUser, useAuth, RedirectToSignIn } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { ChevronDown, CheckCircle2, CircleAlert } from "lucide-react";
 import Link from "next/link";
@@ -24,6 +24,8 @@ const Page = ({ params }) => {
   const [ loadingMockInterviewQnaData, setLoadingMockInterviewQnaData ] = useState();
 
   const { user } = useUser();
+
+  const { isLoaded, isSignedIn } = useAuth();
 
   useEffect(() => {
 
@@ -62,6 +64,19 @@ const Page = ({ params }) => {
     getInterviewFeedback();
 
   }, [params, user?.emailAddresses]);
+
+
+  if (!isLoaded) {
+
+    return null;
+
+  }
+
+  if (!isSignedIn) {
+
+    return <RedirectToSignIn />
+    
+  }
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">

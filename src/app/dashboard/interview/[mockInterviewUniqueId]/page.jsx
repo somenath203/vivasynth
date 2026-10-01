@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useAuth, RedirectToSignIn } from "@clerk/nextjs";
 import Webcam from "react-webcam";
 import { WebcamIcon, Lightbulb } from "lucide-react";
 import toast from "react-hot-toast";
@@ -12,6 +13,7 @@ import { Button } from "@/components/ui/button";
 
 const Page = ({ params }) => {
 
+  const { isLoaded, isSignedIn } = useAuth();
 
   const [ mockInterViewUniqueIdFromParams, setMockInterViewUniqueIdFromParams ] = useState();
 
@@ -50,7 +52,18 @@ const Page = ({ params }) => {
 
   }, [params]);
 
-  console.log(wholeInterviewData);
+
+  if (!isLoaded) {
+
+    return null;
+
+  }
+
+  if (!isSignedIn) {
+
+    return <RedirectToSignIn />
+    
+  }
 
   return (
     <div className="my-10">

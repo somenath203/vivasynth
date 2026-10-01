@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useAuth, RedirectToSignIn } from "@clerk/nextjs";
 
 import { getParticularMockInterviewBasedOnUniqueMockInterviewId } from "@/server-actions/mock-interview-server-actions";
 import QuestionsSectionComponent from "./_components/QuestionsSectionComponent";
@@ -18,6 +19,8 @@ const EnableWebcamAndRecordAnswerGetAIFeedbackDynamic = dynamic(
 
 
 const Page = ({ params }) => {
+
+  const { isLoaded, isSignedIn } = useAuth();
 
   const [ mockInterviewWholeData, setMockInterviewWholeData ] = useState();
 
@@ -56,6 +59,19 @@ const Page = ({ params }) => {
     getInterviewDataBasedOnMockInterviewUniqueIdComingFromParams();
 
   }, [params]);
+
+  
+  if (!isLoaded) {
+
+    return null;
+
+  }
+
+  if (!isSignedIn) {
+
+    return <RedirectToSignIn />
+    
+  }
 
   return (
     <div>

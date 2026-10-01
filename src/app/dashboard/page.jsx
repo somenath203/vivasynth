@@ -1,7 +1,12 @@
+import { auth } from "@clerk/nextjs/server";
+
 import CreateNewInterview from "./_components/CreateNewInterview";
 import InterviewHistoryList from "./_components/InterviewHistoryList";
 
-const Page = () => {
+const Page = async () => {
+
+  await auth.protect();
+  
   return (
     <div className="p-10">
       
