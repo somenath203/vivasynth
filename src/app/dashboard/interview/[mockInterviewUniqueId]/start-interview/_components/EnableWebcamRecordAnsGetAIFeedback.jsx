@@ -372,6 +372,8 @@ const EnableWebcamRecordAnsGetAIFeedback = ({ wholeInterviewData, mockInterviewQ
 
       toast.error("Something went wrong while saving your answer.");
 
+      setResults([]);
+
     } finally {
 
       setIsGeneratingFeedbackandStoringDataInDB(false);

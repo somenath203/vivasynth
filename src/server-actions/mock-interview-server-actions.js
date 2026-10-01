@@ -1,21 +1,13 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import { db } from "..";
 import { mockInterviewDataTable, userAnswerDataTable } from "@/db/schema";
 
 
-export const storeMockInterviewDataInDB = async (
-  jobPosition,
-  jobDescription,
-  yearsOfExperience,
-  generatedMockInterviewQuestionsAndAnswersByAI,
-  emailIdOfTheUserWhoCreatedTheMockInterview,
-  createdAt,
-  uniqueMockInterviewId,
-) => {
+export const storeMockInterviewDataInDB = async ( jobPosition, jobDescription, yearsOfExperience, generatedMockInterviewQuestionsAndAnswersByAI, emailIdOfTheUserWhoCreatedTheMockInterview, createdAt, uniqueMockInterviewId ) => {
 
   try {
 
@@ -33,14 +25,14 @@ export const storeMockInterviewDataInDB = async (
         jobPosition: jobPosition,
         jobDescription: jobDescription,
         yearsOfExperience: yearsOfExperience,
-        generatedMockInterviewQuestionsAndAnswersByAI: generatedMockInterviewQuestionsAndAnswersByAI,
-        emailIdOfTheUserWhoCreatedTheMockInterview: emailIdOfTheUserWhoCreatedTheMockInterview,
+        generatedMockInterviewQuestionsAndAnswersByAI:
+          generatedMockInterviewQuestionsAndAnswersByAI,
+        emailIdOfTheUserWhoCreatedTheMockInterview:
+          emailIdOfTheUserWhoCreatedTheMockInterview,
         createdAt: createdAt,
         uniqueMockInterviewId: uniqueMockInterviewId,
       })
       .returning();
-
-    console.log(dataStoredInDB);
 
     return {
       success: true,
@@ -95,7 +87,7 @@ export const getParticularMockInterviewBasedOnUniqueMockInterviewId = async (moc
     };
 
   }
-  
+
 };
 
 
@@ -110,7 +102,7 @@ export const storeUserAnswerInDB = async (mockInterviewUniqueId, question, actua
       throw new Error("You must be signed in to access this server.");
 
     }
-    
+
     await db.insert(userAnswerDataTable).values({
       mockIdOfTheInterviewToWhichThisQnABelongsTo: mockInterviewUniqueId,
       question: question,
@@ -118,8 +110,9 @@ export const storeUserAnswerInDB = async (mockInterviewUniqueId, question, actua
       answerGivenByUser: answerGivenByUser,
       feedbackByAI: feedbackByAI,
       ratingByAI: ratingByAI,
-      emailIdOfTheUserToWhomThisAnswerDataBelongTo: emailIdOfTheUserToWhomThisAnswerDataBelongTo,
-      createdAt: createdAt
+      emailIdOfTheUserToWhomThisAnswerDataBelongTo:
+        emailIdOfTheUserToWhomThisAnswerDataBelongTo,
+      createdAt: createdAt,
     });
 
     return {
@@ -128,7 +121,7 @@ export const storeUserAnswerInDB = async (mockInterviewUniqueId, question, actua
     };
 
   } catch (error) {
-    
+
     console.error("Error storing user answer data:", error);
 
     return {
@@ -138,4 +131,52 @@ export const storeUserAnswerInDB = async (mockInterviewUniqueId, question, actua
 
   }
 
-}
+};
+
+
+export const getAllMockInterviewAnswerDataForParticularInterview = async (mockInterviewUniqueId, userEmailAddress) => {
+
+  try {
+
+    const { isAuthenticated } = await auth();
+
+    if (!isAuthenticated) {
+
+      throw new Error("You must be signed in to access this server.");
+
+    }
+
+    const mockInterviewAnswerData = await db
+      .select()
+      .from(userAnswerDataTable)
+      .where(
+        and(
+          eq(
+            userAnswerDataTable.mockIdOfTheInterviewToWhichThisQnABelongsTo,
+            mockInterviewUniqueId,
+          ),
+          eq(
+            userAnswerDataTable.emailIdOfTheUserToWhomThisAnswerDataBelongTo,
+            userEmailAddress,
+          ),
+        ),
+      )
+      .orderBy(userAnswerDataTable.id);
+
+    return {
+      success: true,
+      data: mockInterviewAnswerData,
+    };
+
+  } catch (error) {
+
+    console.error("Error fetching the data:", error);
+
+    return {
+      success: false,
+      message: error?.message || "Failed to fetch the data. Please try again.",
+    };
+
+  }
+  
+};
