@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 
 import { db } from "..";
-import { mockInterviewDataTable } from "@/db/schema";
+import { mockInterviewDataTable, userAnswerDataTable } from "@/db/schema";
 
 
 export const storeMockInterviewDataInDB = async (
@@ -33,10 +33,8 @@ export const storeMockInterviewDataInDB = async (
         jobPosition: jobPosition,
         jobDescription: jobDescription,
         yearsOfExperience: yearsOfExperience,
-        generatedMockInterviewQuestionsAndAnswersByAI:
-          generatedMockInterviewQuestionsAndAnswersByAI,
-        emailIdOfTheUserWhoCreatedTheMockInterview:
-          emailIdOfTheUserWhoCreatedTheMockInterview,
+        generatedMockInterviewQuestionsAndAnswersByAI: generatedMockInterviewQuestionsAndAnswersByAI,
+        emailIdOfTheUserWhoCreatedTheMockInterview: emailIdOfTheUserWhoCreatedTheMockInterview,
         createdAt: createdAt,
         uniqueMockInterviewId: uniqueMockInterviewId,
       })
@@ -99,3 +97,45 @@ export const getParticularMockInterviewBasedOnUniqueMockInterviewId = async (moc
   }
   
 };
+
+
+export const storeUserAnswerInDB = async (mockInterviewUniqueId, question, actualAnswer, answerGivenByUser, feedbackByAI, ratingByAI, emailIdOfTheUserToWhomThisAnswerDataBelongTo, createdAt) => {
+
+  try {
+
+    const { isAuthenticated } = await auth();
+
+    if (!isAuthenticated) {
+
+      throw new Error("You must be signed in to access this server.");
+
+    }
+    
+    await db.insert(userAnswerDataTable).values({
+      mockIdOfTheInterviewToWhichThisQnABelongsTo: mockInterviewUniqueId,
+      question: question,
+      actualAns: actualAnswer,
+      answerGivenByUser: answerGivenByUser,
+      feedbackByAI: feedbackByAI,
+      ratingByAI: ratingByAI,
+      emailIdOfTheUserToWhomThisAnswerDataBelongTo: emailIdOfTheUserToWhomThisAnswerDataBelongTo,
+      createdAt: createdAt
+    });
+
+    return {
+      success: true,
+      message: "User answer stored successfully.",
+    };
+
+  } catch (error) {
+    
+    console.error("Error storing user answer data:", error);
+
+    return {
+      success: false,
+      message: error?.message || "Failed to store user answer. Please try again.",
+    };
+
+  }
+
+}

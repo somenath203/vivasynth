@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 
 import { getParticularMockInterviewBasedOnUniqueMockInterviewId } from "@/server-actions/mock-interview-server-actions";
 import QuestionsSectionComponent from "./_components/QuestionsSectionComponent";
+import { Button } from "@/components/ui/button";
 
 
-const EnableWebcamAndRecordAnswerDynamic = dynamic(
-  () => import("./_components/EnableWebcamAndRecordAnswer"),
+const EnableWebcamAndRecordAnswerGetAIFeedbackDynamic = dynamic(
+  () => import("./_components/EnableWebcamRecordAnsGetAIFeedback"),
   {
     ssr: false,
   },
@@ -21,7 +23,7 @@ const Page = ({ params }) => {
 
   const [ mockInterViewQuestionAnswerData, setMockInterviewQuestionAnswerData ] = useState();
 
-  const [ indexOfQuestionAnswerSelectedByUser, setIndexOfQuestionAnswerSelectedByUser ] = useState(0);
+  const [ indexOfCurrentlyActiveQuestion, setIndexOfCurrentlyActiveQuestion ] = useState(0);
 
   useEffect(() => {
 
@@ -54,21 +56,45 @@ const Page = ({ params }) => {
     getInterviewDataBasedOnMockInterviewUniqueIdComingFromParams();
 
   }, [params]);
-  
-  console.log(mockInterViewQuestionAnswerData);
-  
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+    <div>
 
-      {/* Questions */}
-      <QuestionsSectionComponent 
-        mockInterviewQuestionAnswerData={mockInterViewQuestionAnswerData} 
-        questionAnswerIndexSelectedByUser={indexOfQuestionAnswerSelectedByUser}
-      />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
 
-      {/* Video/Audio recording */}
-      <EnableWebcamAndRecordAnswerDynamic />
+        {/* Questions */}
+        <QuestionsSectionComponent 
+          mockInterviewQuestionAnswerData={mockInterViewQuestionAnswerData} 
+          questionAnswerIndexSelectedByUser={indexOfCurrentlyActiveQuestion}
+        />
+
+        {/* Video and Audio recording */}
+        <EnableWebcamAndRecordAnswerGetAIFeedbackDynamic
+          wholeInterviewData={mockInterviewWholeData}
+          mockInterviewQuestionAnswerData={mockInterViewQuestionAnswerData}
+          questionAnswerIndexSelectedByUser={indexOfCurrentlyActiveQuestion}
+        />
+
+      </div>
+
+      {/* 'previous' and 'next' buttons to go to previous question or the next question */}
+      <div className="flex items-center justify-end gap-6 mb-5">
+
+        {indexOfCurrentlyActiveQuestion !== mockInterViewQuestionAnswerData?.length - 1 && (
+
+          <Button onClick={() => setIndexOfCurrentlyActiveQuestion(indexOfCurrentlyActiveQuestion + 1)} className="p-5 hover:cursor-pointer">Next Question</Button>
+
+        )}
+
+        {indexOfCurrentlyActiveQuestion === mockInterViewQuestionAnswerData?.length - 1 && (
+
+          <Link href={`/dashboard/interview/${mockInterviewWholeData?.uniqueMockInterviewId}/feedback`}>
+            <Button className="p-5 hover:cursor-pointer">End Interview</Button>
+          </Link>
+
+        )}
+
+      </div>
 
     </div>
   )

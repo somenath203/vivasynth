@@ -11,3 +11,15 @@ export const mockInterviewDataTable = pgTable("mockInterviewData", {
   createdAt: varchar().notNull(),
   uniqueMockInterviewId: varchar().notNull(),
 });
+
+export const userAnswerDataTable = pgTable("userInterviewAnswerData", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  mockIdOfTheInterviewToWhichThisQnABelongsTo: varchar().notNull(),
+  question: varchar().notNull(),
+  actualAns: varchar().notNull(),
+  answerGivenByUser: text().notNull(),
+  feedbackByAI: text().notNull(),
+  ratingByAI: varchar().notNull(),
+  emailIdOfTheUserToWhomThisAnswerDataBelongTo: varchar().notNull(),
+  createdAt: varchar().notNull(),
+});

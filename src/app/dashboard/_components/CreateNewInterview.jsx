@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { generateFiveQuestionsANdAnswersForMockInterview } from "@/server-actions/google-gemini-server-actions";
+import { generateFiveQuestionsANdAnswersForMockInterview } from "@/server-actions/generate-qna-server-actions";
 import { storeMockInterviewDataInDB } from "@/server-actions/mock-interview-server-actions";
 
 
@@ -34,8 +34,6 @@ const CreateNewInterview = () => {
   const [yearOfExperienceInput, setYearOfExperieneInput] = useState("");
 
   const [loadingAIResponse, setLoadingAIResponse] = useState(false);
-
-  const [ generatedQuestionsAndAnswersByAI, setGeneratedQuestionsAndAnswersByAI ] = useState();
 
   const router = useRouter();
 
@@ -55,8 +53,6 @@ const CreateNewInterview = () => {
       );
 
       if (res) {
-
-        setGeneratedQuestionsAndAnswersByAI(res);
 
         const storeAllDataInDB = await storeMockInterviewDataInDB(
           jobPositionInput,
