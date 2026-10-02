@@ -493,7 +493,7 @@ Add the appropriate values to the environment variables.
 
 Make sure you replace the empty variables with your own credentials before running the application.
 
-> **Note:** Do not commit your `.env.local` file or expose your secret keys publicly.
+> **Note:** Do not commit your `.env` file or expose your secret keys publicly.
 
 ---
 
