@@ -18,21 +18,11 @@ const InterviewItemCard = ({ interview }) => {
         Created at: {interview?.createdAt}
       </h2>
 
-      <div className="flex justify-between gap-2">
+      <Link href={`/dashboard/interview/${interview?.uniqueMockInterviewId}/feedback`} className="w-full">
 
-        <Link href={`/dashboard/interview/${interview?.uniqueMockInterviewId}/start-interview`} className="w-full">
+        <Button className="w-full hover:cursor-pointer">Feedback</Button>
 
-          <Button className="w-full hover:cursor-pointer">Retake</Button>
-
-        </Link>
-
-        <Link href={`/dashboard/interview/${interview?.uniqueMockInterviewId}/feedback`} className="w-full">
-
-          <Button className="w-full hover:cursor-pointer">Feedback</Button>
-
-        </Link>
-
-      </div>
+      </Link>
 
     </div>
   );

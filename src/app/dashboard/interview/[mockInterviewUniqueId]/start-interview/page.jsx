@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useAuth, RedirectToSignIn } from "@clerk/nextjs";
+import { WebcamIcon } from "lucide-react";
 
 import { getParticularMockInterviewBasedOnUniqueMockInterviewId } from "@/server-actions/mock-interview-server-actions";
 import QuestionsSectionComponent from "./_components/QuestionsSectionComponent";
@@ -22,11 +23,19 @@ const Page = ({ params }) => {
 
   const { isLoaded, isSignedIn } = useAuth();
 
+  const [isWebCamEnabled, setIsWebCamEnabled] = useState(false);
+
   const [ mockInterviewWholeData, setMockInterviewWholeData ] = useState();
 
   const [ mockInterViewQuestionAnswerData, setMockInterviewQuestionAnswerData ] = useState();
 
   const [ indexOfCurrentlyActiveQuestion, setIndexOfCurrentlyActiveQuestion ] = useState(0);
+
+  const [ isRecordingParent, setIsRecordingParent ] = useState(false);
+
+  const [ isGeneratingFeedbackParent, setIsGeneratingFeedbackParent ] = useState(false);
+
+  const isNavigationDisabled = isRecordingParent || isGeneratingFeedbackParent;
 
   useEffect(() => {
 
@@ -89,28 +98,51 @@ const Page = ({ params }) => {
           wholeInterviewData={mockInterviewWholeData}
           mockInterviewQuestionAnswerData={mockInterViewQuestionAnswerData}
           questionAnswerIndexSelectedByUser={indexOfCurrentlyActiveQuestion}
+          isWebCamEnabled={isWebCamEnabled}
+          setIsWebCamEnabled={setIsWebCamEnabled}
+          setIsRecordingParent={setIsRecordingParent}
+          setIsGeneratingFeedbackParent={setIsGeneratingFeedbackParent}
         />
 
       </div>
 
       {/* 'previous' and 'next' buttons to go to previous question or the next question */}
-      <div className="flex items-center justify-end gap-6 mb-5">
+      {isWebCamEnabled ? (
 
-        {indexOfCurrentlyActiveQuestion !== mockInterViewQuestionAnswerData?.length - 1 && (
+        <div className="flex items-center justify-end gap-6 mb-5">
 
-          <Button onClick={() => setIndexOfCurrentlyActiveQuestion(indexOfCurrentlyActiveQuestion + 1)} className="p-5 hover:cursor-pointer">Next Question</Button>
+          {indexOfCurrentlyActiveQuestion !== mockInterViewQuestionAnswerData?.length - 1 && (
 
-        )}
+            <Button
+              onClick={() => setIndexOfCurrentlyActiveQuestion(indexOfCurrentlyActiveQuestion + 1)}
+              disabled={isNavigationDisabled}
+              className="p-5 hover:cursor-pointer"
+            >
+              Next Question
+            </Button>
+          )}
 
-        {indexOfCurrentlyActiveQuestion === mockInterViewQuestionAnswerData?.length - 1 && (
+          {indexOfCurrentlyActiveQuestion === mockInterViewQuestionAnswerData?.length - 1 && (
+            <Link href={`/dashboard/interview/${mockInterviewWholeData?.uniqueMockInterviewId}/feedback`}>
 
-          <Link href={`/dashboard/interview/${mockInterviewWholeData?.uniqueMockInterviewId}/feedback`}>
-            <Button className="p-5 hover:cursor-pointer">End Interview</Button>
-          </Link>
+              <Button disabled={isNavigationDisabled} className="p-5 hover:cursor-pointer">
+                End Interview
+              </Button>
+              
+            </Link>
+          )}
+        </div>
+      ) : (
+        <div className="mb-5 flex items-center justify-end">
+          <div className="flex items-center gap-3 rounded-lg border border-border bg-secondary/60 px-4 py-3 text-sm text-muted-foreground shadow-sm">
+            <WebcamIcon className="h-5 w-5 shrink-0 text-primary" />
 
-        )}
-
-      </div>
+            <p>
+              Please enable your camera to continue to the next question.
+            </p>
+          </div>
+        </div>
+      )}
 
     </div>
   )

@@ -131,14 +131,13 @@ const Page = ({ params }) => {
       {/* Interview data */}
       {loadingMockInterviewQnaData ? <Loader2 size={30} className="text-primary transition-all animate-spin duration-150" /> : <div className="space-y-3">
 
-        {mockInterviewQnaDataAlongWithRatingAndFeedback?.map((data, index) => (
+        {mockInterviewQnaDataAlongWithRatingAndFeedback?.map((data) => (
 
           <Collapsible className="group/item rounded-xl border bg-background" key={data?.id}>
 
             <CollapsibleTrigger className="group flex w-full items-start justify-between gap-4 p-4 text-left hover:cursor-pointer">
 
               <span className="flex gap-3">
-                <span className="text-sm font-medium text-gray-400">Q{index + 1}</span>
                 <span className="font-medium leading-snug">{data?.question}</span>
               </span>
 

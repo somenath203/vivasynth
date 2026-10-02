@@ -100,9 +100,11 @@ const QuestionsSectionComponent = ({ mockInterviewQuestionAnswerData, questionAn
 
         <h2 className="text-sm text-primary my-2">
           Click on &apos;Record Answer&apos; when you&apos;re ready to answer
-          the question. At the end of the interview, you&apos;ll receive
-          detailed feedback for each question, along with the correct answer and
-          your response so you can easily compare them.
+          the question. Once your answer has been recorded and processed, you 
+          won&apos;t be able to record another answer for the same question. 
+          At the end of the interview, you&apos;ll receive detailed feedback 
+          for each question, along with the correct answer and your response 
+          so you can easily compare them.
         </h2>
 
       </div>

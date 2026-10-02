@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
@@ -14,7 +15,7 @@ import { generateInterviewAnswerFeedback } from "@/server-actions/feeback-ai-ser
 import { storeUserAnswerInDB } from "@/server-actions/mock-interview-server-actions";
 
 
-const EnableWebcamRecordAnsGetAIFeedback = ({ wholeInterviewData, mockInterviewQuestionAnswerData, questionAnswerIndexSelectedByUser }) => {
+const EnableWebcamRecordAnsGetAIFeedback = ({ wholeInterviewData, mockInterviewQuestionAnswerData, questionAnswerIndexSelectedByUser, isWebCamEnabled, setIsWebCamEnabled, setIsRecordingParent, setIsGeneratingFeedbackParent }) => {
 
   const { user } = useUser();
 
@@ -23,9 +24,9 @@ const EnableWebcamRecordAnsGetAIFeedback = ({ wholeInterviewData, mockInterviewQ
       useLegacyResults: false,
     });
 
-  const [isWebCamEnabled, setIsWebCamEnabled] = useState(false);
-
   const [ isGeneratingFeedbackandStoringDataInDB, setIsGeneratingFeedbackandStoringDataInDB ] = useState(false);
+
+  const [ isAnswerRecordedAndFeedbackGenerateSuccessfully, setIsAnswerRecordedAndFeedbackGenerateSuccessfully ] = useState(false);
 
   const shouldSaveAnswerRef = useRef(false);
   /**
@@ -336,10 +337,7 @@ const EnableWebcamRecordAnsGetAIFeedback = ({ wholeInterviewData, mockInterviewQ
         
       }
       
-      const res = await generateInterviewAnswerFeedback(
-        mockInterviewQuestionAnswerData[questionAnswerIndexSelectedByUser]?.question,
-        completeUserAnswer,
-      );
+      const res = await generateInterviewAnswerFeedback(mockInterviewQuestionAnswerData[questionAnswerIndexSelectedByUser]?.question, completeUserAnswer);
 
       if (res) {
 
@@ -362,6 +360,8 @@ const EnableWebcamRecordAnsGetAIFeedback = ({ wholeInterviewData, mockInterviewQ
 
           setResults([]);
 
+          setIsAnswerRecordedAndFeedbackGenerateSuccessfully(true);
+
         }
 
       }
@@ -378,6 +378,8 @@ const EnableWebcamRecordAnsGetAIFeedback = ({ wholeInterviewData, mockInterviewQ
 
       setIsGeneratingFeedbackandStoringDataInDB(false);
 
+      setIsGeneratingFeedbackParent(false);
+
     }
 
   };
@@ -391,6 +393,13 @@ const EnableWebcamRecordAnsGetAIFeedback = ({ wholeInterviewData, mockInterviewQ
     }
 
   }, [error]);
+
+  // Reset the success message whenever the user moves to a new interview question.
+  useEffect(() => {
+
+    setIsAnswerRecordedAndFeedbackGenerateSuccessfully(false);
+    
+  }, [questionAnswerIndexSelectedByUser]);
 
   useEffect(() => {
 
@@ -433,6 +442,15 @@ const EnableWebcamRecordAnsGetAIFeedback = ({ wholeInterviewData, mockInterviewQ
     generateAIFeedbackAndSaveUserAnswerInDB(completeUserAnswer);
 
   }, [isRecording, results]);
+
+
+    // Sync the recording state with the parent so it can disable navigation while the user is recording.
+    useEffect(() => {
+
+      setIsRecordingParent(isRecording);
+      // "isRecording" is coming directly from "useSpeechToText()"
+
+    }, [isRecording]);
 
   return (
     <div>
@@ -488,6 +506,8 @@ const EnableWebcamRecordAnsGetAIFeedback = ({ wholeInterviewData, mockInterviewQ
 
                 setIsGeneratingFeedbackandStoringDataInDB(true);
 
+                setIsGeneratingFeedbackParent(true);
+
                 stopSpeechToText();
 
               }}
@@ -497,6 +517,12 @@ const EnableWebcamRecordAnsGetAIFeedback = ({ wholeInterviewData, mockInterviewQ
               <span>stop recording</span>
 
             </Button>
+
+          ) : isAnswerRecordedAndFeedbackGenerateSuccessfully ? (
+
+            <div className="mt-3 flex w-full items-center justify-center rounded-lg border border-green-500/20 bg-green-500/10 px-4 py-4 text-sm font-medium text-green-600">
+              ✅ Answer recorded successfully
+            </div>
 
           ) : (
 
