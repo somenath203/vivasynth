@@ -458,7 +458,7 @@ pnpm install
 
 ### 3. Create the Environment Variables File
 
-Create a `.env.local` file in the root directory of the project.
+Create a `.env` file in the root directory of the project.
 
 You can use the following `.env.example` as a reference:
 
